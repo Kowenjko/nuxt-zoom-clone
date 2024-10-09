@@ -2,8 +2,6 @@
 import { sidebarLinks } from '@/constants'
 
 const route = useRoute()
-
-console.log(route.path)
 </script>
 <template>
 	<section
