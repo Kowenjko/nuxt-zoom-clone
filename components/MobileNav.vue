@@ -20,7 +20,7 @@ const route = useRoute()
 				<SheetDescription v-show="false"></SheetDescription>
 				<nuxt-link to="/" class="flex items-center gap-1">
 					<img src="/icons/logo.svg" width="32" height="32" alt="yoom logo" />
-					<p class="text-[26px] font-extrabold text-white">VOOM</p>
+					<p class="text-[26px] font-extrabold text-white">My Zoom</p>
 				</nuxt-link>
 				<div class="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
 					<SheetClose asChild>

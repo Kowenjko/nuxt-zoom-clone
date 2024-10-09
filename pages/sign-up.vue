@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { SignIn } from 'vue-clerk'
+import { SignUp } from 'vue-clerk'
 
-useHead({ title: 'Sign In' })
+useHead({ title: 'Sign Up' })
 
 definePageMeta({ layout: 'auth' })
 </script>
-
 <template>
-	<SignIn />
+	<SignUp />
 </template>

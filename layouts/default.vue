@@ -1,12 +1,4 @@
-<script lang="ts" setup>
-useHead({
-	title: 'VOOM',
-	meta: {
-		name: 'description',
-		content: 'A workspace for your team, powered by Stream Chat and Clerk.',
-	},
-})
-</script>
+<script lang="ts" setup></script>
 <template>
 	<main class="relative">
 		<Navbar />

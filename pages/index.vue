@@ -3,6 +3,11 @@ const now = new Date()
 
 const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now)
+
+definePageMeta({
+	middleware: 'auth',
+	auth: { guestRedirectUrl: '/sign-in' },
+})
 </script>
 <template>
 	<section class="flex size-full flex-col gap-5 text-white">
@@ -17,7 +22,6 @@ const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now)
 				</div>
 			</div>
 		</div>
-
 		<!-- <MeetingTypeList /> -->
 	</section>
 </template>

@@ -11,6 +11,7 @@ export default defineNuxtConfig({
 		'@vueuse/nuxt',
 		'@pinia/nuxt',
 		'shadcn-nuxt',
+		'vue-clerk/nuxt',
 	],
 
 	fonts: {
@@ -19,5 +20,25 @@ export default defineNuxtConfig({
 	shadcn: {
 		prefix: '',
 		componentDir: './components/ui',
+	},
+	clerk: {
+		appearance: {
+			layout: { logoImageUrl: '/icons/yoom-logo.svg', socialButtonsVariant: 'iconButton' },
+			variables: {
+				colorText: '#ffffff',
+				colorPrimary: '#0E78F9',
+				colorBackground: '#1c1f2e',
+				colorInputBackground: '#252a41',
+				colorInputText: '#ffffff',
+			},
+		},
+	},
+	runtimeConfig: {
+		public: {
+			clerkPublishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+			streamApiKey: process.env.NUXT_STREAM_API_KEY,
+		},
+		clerkSecretKey: process.env.NUXT_CLERK_SECRET_KEY,
+		streamSecret: process.env.NUXT_STREAM_SECRET,
 	},
 })
