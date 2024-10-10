@@ -37,6 +37,7 @@ export default defineNuxtConfig({
 		public: {
 			clerkPublishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 			streamApiKey: process.env.NUXT_STREAM_API_KEY,
+			publicBaseUrl: process.env.NUXT_PUBLIC_BASE_URL,
 		},
 		clerkSecretKey: process.env.NUXT_CLERK_SECRET_KEY,
 		streamSecret: process.env.NUXT_STREAM_SECRET,

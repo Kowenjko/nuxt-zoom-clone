@@ -22,6 +22,6 @@ definePageMeta({
 				</div>
 			</div>
 		</div>
-		<!-- <MeetingTypeList /> -->
+		<MeetingTypeList />
 	</section>
 </template>
