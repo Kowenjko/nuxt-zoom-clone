@@ -24,16 +24,9 @@ const route = useRoute()
 				</nuxt-link>
 				<div class="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
 					<SheetClose asChild>
-						<section class="flex h-full flex-col gap-6 pt-16 text-white">
-							<SheetClose asChild v-for="item in sidebarLinks" :key="item.label">
-								<nuxt-link
-									:to="item.route"
-									class="flex gap-4 items-center p-4 rounded-lg w-full max-w-60"
-									:class="{ 'bg-blue-1': route.path === item.route }"
-								>
-									<img :src="item.imgURL" :alt="item.label" width="20" height="20" />
-									<p class="font-semibold">{{ item.label }}</p>
-								</nuxt-link>
+						<section>
+							<SheetClose class="flex h-full flex-col gap-6 pt-16 text-white">
+								<MenuNav size-image="20" />
 							</SheetClose>
 						</section>
 					</SheetClose>

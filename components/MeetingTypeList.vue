@@ -1,24 +1,78 @@
 <script lang="ts" setup>
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
+import { StreamVideoClient } from '@stream-io/video-client'
+import { useToast } from '@/components/ui/toast/use-toast'
+
 const meetingState = ref<'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined>(
 	undefined
 )
 
 const callDetail = ref()
+const token = ref()
 
 interface IFormData {
-	dateTime: DateValue | string
+	dateTime: DateValue | null
 	link: string
 	description: string
 }
 
 const formData = reactive<IFormData>({
-	dateTime: '',
+	dateTime: null,
 	link: '',
 	description: '',
 })
 
-const { publicBaseUrl } = useRuntimeConfig().public
+const config = useRuntimeConfig()
+const { user } = useUser()
+const { toast } = useToast()
+
+const client = await useStreamVideoClient()
+const df = new DateFormatter('en-US', { dateStyle: 'long' })
+
+const createMeeting = async () => {
+	if (!client || !user.value) return
+
+	try {
+		if (!formData.dateTime) {
+			toast({ title: 'Please select a date and time' })
+			return
+		}
+
+		const id = crypto.randomUUID()
+		const call = client.call('default', id)
+
+		if (!call) throw new Error('Failed to create meeting')
+
+		const startsAt = formData.dateTime
+			? new Date(
+					formData.dateTime.year,
+					formData.dateTime.month,
+					formData.dateTime.day
+				).toISOString()
+			: new Date(Date.now()).toISOString()
+
+		const description = formData.description || 'Instant Meeting'
+
+		await call.getOrCreate({
+			data: {
+				starts_at: startsAt,
+				custom: {
+					description,
+				},
+			},
+		})
+		callDetail.value = call
+		if (!formData.description) {
+			navigateTo(`/meeting/${call.id}`)
+		}
+		toast({
+			title: 'Meeting Created',
+		})
+	} catch (err) {
+		console.error(err)
+		toast({ title: 'Failed to create Meeting' })
+	}
+}
 
 watch(formData, (value) => console.log(value))
 </script>
@@ -69,7 +123,7 @@ watch(formData, (value) => console.log(value))
 			:isOpen="meetingState === 'isScheduleMeeting'"
 			@onClose="meetingState = undefined"
 			title="Create Meeting"
-			@handleClick=""
+			@handleClick="createMeeting"
 		>
 			<div class="flex flex-col gap-2.5">
 				<label class="text-base font-normal leading-[22.4px] text-sky-2"> Add a description </label>
@@ -113,3 +167,8 @@ watch(formData, (value) => console.log(value))
 		/>
 	</section>
 </template>
+<style scoped>
+video {
+	object-fit: contain;
+}
+</style>
