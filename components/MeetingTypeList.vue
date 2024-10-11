@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
-import { StreamVideoClient } from '@stream-io/video-client'
+import { type DateValue } from '@internationalized/date'
 import { useToast } from '@/components/ui/toast/use-toast'
 
 const meetingState = ref<'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined>(
@@ -8,7 +7,6 @@ const meetingState = ref<'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMe
 )
 
 const callDetail = ref()
-const token = ref()
 
 interface IFormData {
 	dateTime: DateValue | null
@@ -22,12 +20,10 @@ const formData = reactive<IFormData>({
 	description: '',
 })
 
-const config = useRuntimeConfig()
 const { user } = useUser()
 const { toast } = useToast()
 
-const client = await useStreamVideoClient()
-const df = new DateFormatter('en-US', { dateStyle: 'long' })
+const client = useStreamVideoClient()
 
 const createMeeting = async () => {
 	if (!client || !user.value) return
@@ -167,8 +163,3 @@ watch(formData, (value) => console.log(value))
 		/>
 	</section>
 </template>
-<style scoped>
-video {
-	object-fit: contain;
-}
-</style>
