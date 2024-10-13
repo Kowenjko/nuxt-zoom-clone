@@ -44,6 +44,8 @@ const fetchRecordings = async () => {
 		store.callRecordings?.map((meeting) => meeting.queryRecordings()) ?? []
 	)
 
+	console.log(callData)
+
 	recordings.value = callData
 		.filter((call) => call.recordings.length > 0)
 		.flatMap((call) => call.recordings)
@@ -70,13 +72,12 @@ const handleClick = (meeting: any) => {
 
 onMounted(async () => {
 	await store.getCalls()
-
 	if (type === 'recordings') await fetchRecordings()
 	loading.value = false
 })
 </script>
 <template>
-	<Loader v-if="loading" />
+	<Loader v-if="loading || store.isCallLoading" />
 	<div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
 		<template v-if="getCalls && getCalls.length > 0">
 			<MeetingCard

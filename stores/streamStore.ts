@@ -188,7 +188,7 @@ export const useStreamStore = defineStore('stream', () => {
 		const streamVideoClient = await useStreamVideoClient()
 
 		if (!streamVideoClient || !user.value) return toast({ title: 'Not client or user' })
-
+		isCallLoading.value = true
 		try {
 			const { calls } = await streamVideoClient.queryCalls({
 				sort: [{ field: 'starts_at', direction: -1 }],
@@ -216,6 +216,7 @@ export const useStreamStore = defineStore('stream', () => {
 			isCallLoading.value = false
 		}
 	}
+
 	/**
 	 * startRoom
 	 * @returns
