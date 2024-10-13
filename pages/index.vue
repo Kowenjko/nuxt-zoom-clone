@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 const now = new Date()
 
-const dfdf = await useStreamStore()
-
 const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(now)
 
@@ -24,6 +22,8 @@ definePageMeta({
 				</div>
 			</div>
 		</div>
-		<ClientOnly><MeetingTypeList /></ClientOnly>
+		<ClientOnly>
+			<MeetingTypeList />
+		</ClientOnly>
 	</section>
 </template>

@@ -1,34 +1,37 @@
 <script lang="ts" setup>
-import type { Call, StreamVideoParticipant } from '@stream-io/video-client'
-const props = defineProps<{
-	call: Call | undefined
-	participant?: StreamVideoParticipant | undefined
-}>()
+const props = defineProps<{ isMeting: boolean }>()
 
 const videoElement = ref<HTMLVideoElement | null>(null)
 const audioElement = ref<HTMLAudioElement | null>(null)
 const unbindVideoElement = ref<(() => void) | undefined>()
 const unbindAudioElement = ref<(() => void) | undefined>()
 
+const store = useStreamStore()
+
 watch(
-	() => props.call,
+	[() => store.call, () => props.isMeting],
 	() => {
-		console.log(videoElement.value)
 		if (videoElement.value) {
-			unbindVideoElement.value = props.call?.bindVideoElement(
+			store.call?.trackElementVisibility(
 				videoElement.value,
-				props.participant?.sessionId || 'sessionId',
+				store.localParticipant?.sessionId || 'sessionId',
+				'videoTrack'
+			)
+			unbindVideoElement.value = store.call?.bindVideoElement(
+				videoElement.value,
+				store.localParticipant?.sessionId || 'sessionId',
 				'videoTrack'
 			)
 		}
-		console.log(unbindVideoElement.value)
+
 		if (audioElement.value) {
-			unbindAudioElement.value = props.call?.bindAudioElement(
+			unbindAudioElement.value = store.call?.bindAudioElement(
 				audioElement.value,
-				props.participant?.sessionId || 'sessionId'
+				store.localParticipant?.sessionId || 'sessionId'
 			)
 		}
-	}
+	},
+	{ deep: true }
 )
 
 onUnmounted(() => {

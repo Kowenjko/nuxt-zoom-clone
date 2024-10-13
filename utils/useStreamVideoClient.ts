@@ -1,18 +1,18 @@
 import { StreamVideoClient } from '@stream-io/video-client'
 
-export const useStreamVideoClient = () => {
+export const useStreamVideoClient = async () => {
 	const { streamApiKey } = useRuntimeConfig().public
-	const { data } = useFetch('/api/token')
+	const data = await $fetch('/api/token')
 
-	if (!data.value?.token || !data.value?.userId) return null
+	if (!data?.token || !data?.userId) return null
 
 	const client: StreamVideoClient = new StreamVideoClient({
 		apiKey: streamApiKey,
-		token: data.value.token,
+		token: data.token,
 		user: {
-			id: data.value.userId,
-			name: 'Vasya Kovenko',
-			image: 'https://getstream.io/random_svg/?id=Vasya&name=Kovenko',
+			id: data.userId,
+			name: data.userName || 'My Zoom',
+			image: `https://getstream.io/random_svg/?id=${data.userId}a&name=${data.userName}`,
 		},
 	})
 

@@ -1,36 +1,42 @@
 <script lang="ts" setup>
-import type { Call, StreamVideoParticipant } from '@stream-io/video-client'
-const props = defineProps<{
-	call: any
-	participant?: StreamVideoParticipant | undefined
-}>()
+const props = defineProps<{ isMeting: boolean }>()
+
+const emit = defineEmits(['goToRoom'])
 
 const isMicCamToggled = ref(false)
+const store = useStreamStore()
+
+// console.log(store.call?.state.startsAt)
+// console.log(store.call?.state.endedAt)
 
 const toggleMicCam = () => {
-	if (isMicCamToggled.value && props.call) {
-		props.call?.camera.disable()
-		props.call?.microphone.disable()
+	if (isMicCamToggled.value && store.call) {
+		store.call?.camera.disable()
+		store.call?.microphone.disable()
 	} else {
-		props.call?.camera.enable()
-		props.call?.microphone.enable()
+		store.call?.camera.enable()
+		store.call?.microphone.enable()
 	}
 }
 
+const goToRoom = () => emit('goToRoom')
+
 watch(isMicCamToggled, toggleMicCam)
-watch(() => props.call, toggleMicCam)
+watch(() => store.call, toggleMicCam)
 </script>
 
 <template>
 	<section class="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
 		<h1 class="text-center text-2xl font-bold">Setup</h1>
-		<VideoPreview :call="call" :participant="participant" />
+		<VideoPreview :isMeting="isMeting" />
 		<div class="flex h-16 items-center justify-center gap-3">
 			<label class="flex items-center justify-center gap-2 font-medium">
 				<input type="checkbox" v-model="isMicCamToggled" /> Join with mic and camera off
 			</label>
 			<!-- <DeviceSettings /> -->
 		</div>
-		<Button type="button" class="rounded-md bg-green-500 px-4 py-2.5"> Join meeting </Button>
+		<Button type="button" class="rounded-md bg-green-500 px-4 py-2.5" @click="goToRoom">
+			Join meeting
+		</Button>
 	</section>
 </template>

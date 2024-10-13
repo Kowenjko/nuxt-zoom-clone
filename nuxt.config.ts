@@ -12,6 +12,7 @@ export default defineNuxtConfig({
 		'@pinia/nuxt',
 		'shadcn-nuxt',
 		'vue-clerk/nuxt',
+		'nuxt-lucide-icons',
 	],
 
 	fonts: {
@@ -32,6 +33,9 @@ export default defineNuxtConfig({
 				colorInputText: '#ffffff',
 			},
 		},
+	},
+	lucide: {
+		namePrefix: 'Icon',
 	},
 	runtimeConfig: {
 		public: {

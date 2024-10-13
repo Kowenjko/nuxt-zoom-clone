@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { type DateValue } from '@internationalized/date'
 import { useToast } from '@/components/ui/toast/use-toast'
+import { useClipboard } from '@vueuse/core'
 
 const meetingState = ref<'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined>(
 	undefined
@@ -22,58 +23,23 @@ const formData = reactive<IFormData>({
 
 const { user } = useUser()
 const { toast } = useToast()
+const { copy } = useClipboard()
+const { publicBaseUrl } = useRuntimeConfig().public
 
-const client = useStreamVideoClient()
+const store = useStreamStore()
 
-const createMeeting = async () => {
-	if (!client || !user.value) return
+const meetingLink = computed(() => `${publicBaseUrl}/meeting/${callDetail.value?.id}`)
 
-	try {
-		if (!formData.dateTime) {
-			toast({ title: 'Please select a date and time' })
-			return
-		}
+const createMeeting = async () => await store.createMeeting(formData)
 
-		const id = crypto.randomUUID()
-		const call = client.call('default', id)
-
-		if (!call) throw new Error('Failed to create meeting')
-
-		const startsAt = formData.dateTime
-			? new Date(
-					formData.dateTime.year,
-					formData.dateTime.month,
-					formData.dateTime.day
-				).toISOString()
-			: new Date(Date.now()).toISOString()
-
-		const description = formData.description || 'Instant Meeting'
-
-		await call.getOrCreate({
-			data: {
-				starts_at: startsAt,
-				custom: {
-					description,
-				},
-			},
-		})
-		callDetail.value = call
-		if (!formData.description) {
-			navigateTo(`/meeting/${call.id}`)
-		}
-		toast({
-			title: 'Meeting Created',
-		})
-	} catch (err) {
-		console.error(err)
-		toast({ title: 'Failed to create Meeting' })
-	}
+const copyLink = () => {
+	copy(meetingLink.value)
+	toast({ title: 'Link Copied' })
 }
-
-watch(formData, (value) => console.log(value))
 </script>
 <template>
-	<section class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+	<Loader v-if="!user" />
+	<section v-else class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
 		<HomeCard
 			imgURL="/icons/add-meeting.svg"
 			title="New Meeting"
@@ -103,11 +69,11 @@ watch(formData, (value) => console.log(value))
 		/>
 
 		<MeetingModal
-			v-if="callDetail"
+			v-if="store.call"
 			:isOpen="meetingState === 'isScheduleMeeting'"
 			@onClose="meetingState = undefined"
 			title="Meeting Created"
-			handleClick=""
+			@handleClick="copyLink"
 			image="/icons/checked.svg"
 			buttonIcon="/icons/copy.svg"
 			className="text-center"

@@ -1,5 +1,5 @@
 import { StreamClient } from '@stream-io/node-sdk'
-import { getAuth } from 'vue-clerk/server'
+import { getAuth, clerkClient } from 'vue-clerk/server'
 
 export default defineEventHandler(async (event) => {
 	const { userId } = getAuth(event)
@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
 	const issuedAt = Math.floor(Date.now() / 1000) - 60
 
 	const token = streamClient.createToken(userId!, expirationTime, issuedAt)
+	const user = await clerkClient(event).users.getUser(userId!)
 
-	return { userId, token }
+	return { userId, token, userName: user?.firstName }
 })
