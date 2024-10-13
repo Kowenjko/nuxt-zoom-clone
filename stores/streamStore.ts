@@ -180,11 +180,14 @@ export const useStreamStore = defineStore('stream', () => {
 		call.value = undefined
 	}
 
+	/**
+	 * getCalls
+	 * @returns
+	 */
 	const getCalls = async () => {
 		const streamVideoClient = await useStreamVideoClient()
 
 		if (!streamVideoClient || !user.value) return toast({ title: 'Not client or user' })
-		isCallLoading.value = true
 
 		try {
 			const { calls } = await streamVideoClient.queryCalls({
@@ -213,6 +216,28 @@ export const useStreamStore = defineStore('stream', () => {
 			isCallLoading.value = false
 		}
 	}
+	/**
+	 * startRoom
+	 * @returns
+	 */
+	const startRoom = async () => {
+		const streamVideoClient = await useStreamVideoClient()
+		if (!streamVideoClient || !user.value) return toast({ title: 'Not client or user' })
+
+		const newCall = streamVideoClient?.call('default', user.value.id)
+
+		if (!newCall) throw new Error('Failed to create meeting')
+
+		if (!call.value) {
+			await newCall.getOrCreate({
+				data: {
+					starts_at: new Date().toISOString(),
+				},
+			})
+		}
+
+		navigateTo(`/meeting/${user.value.id}?personal=true`)
+	}
 
 	return {
 		call,
@@ -230,5 +255,6 @@ export const useStreamStore = defineStore('stream', () => {
 		callRecordings,
 		endedCalls,
 		upcomingCalls,
+		startRoom,
 	}
 })

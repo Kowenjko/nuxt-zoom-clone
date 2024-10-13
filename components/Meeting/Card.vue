@@ -3,11 +3,10 @@ import { avatarImages } from '@/constants'
 import { useClipboard } from '@vueuse/core'
 import { useToast } from '@/components/ui/toast/use-toast'
 
-const { link } = defineProps<{
-	title: string
-	date: string
+const { link, meeting } = defineProps<{
 	icon: string
 	isPreviousMeeting?: boolean
+	meeting: any
 	buttonIcon1?: string
 	buttonText?: string
 	link: string
@@ -18,6 +17,16 @@ const emit = defineEmits<{ handleClick: [] }>()
 const { copy } = useClipboard()
 const { toast } = useToast()
 
+const getTitle = computed(
+	() =>
+		meeting?.state?.custom?.description || meeting?.filename?.substring(0, 20) || 'No Description'
+)
+
+const getDate = computed(
+	() =>
+		meeting.state?.startsAt?.toLocaleString() || meeting.start_time?.toLocaleString() || 'No Date'
+)
+console.log('title')
 const copyLink = () => {
 	copy(link)
 	toast({ title: 'Link Copied' })
@@ -31,8 +40,8 @@ const copyLink = () => {
 			<img :src="icon" alt="upcoming" width="28" height="28" />
 			<div class="flex justify-between">
 				<div class="flex flex-col gap-2">
-					<h1 class="text-2xl font-bold">{{ title }}</h1>
-					<p class="text-base font-normal">{{ date }}</p>
+					<h1 class="text-2xl font-bold">{{ getTitle }}</h1>
+					<p class="text-base font-normal">{{ getDate }}</p>
 				</div>
 			</div>
 		</article>
@@ -59,7 +68,7 @@ const copyLink = () => {
 
 			<div v-if="isPreviousMeeting" class="flex gap-2">
 				<Button @click="emit('handleClick')" class="rounded bg-blue-1 px-6">
-					<Image v-if="buttonIcon1" :src="buttonIcon1" alt="feature" width="20" height="20" />
+					<img v-if="buttonIcon1" :src="buttonIcon1" alt="feature" width="20" height="20" />
 					&nbsp; {{ buttonText }}
 				</Button>
 				<Button @click="copyLink" class="bg-dark-4 px-6">
